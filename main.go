@@ -16,7 +16,7 @@ message is coming from a NATS queue.
 */
 
 func main() {
-	
+
 	//	First we have to create the domain
 	myDomain := domain.Domain{}
 
@@ -25,8 +25,8 @@ func main() {
 
 	//	Then we create the port processor
 	myPortProcessor := domain.PortProcessor{
-		myDomain,
-		myOutgoingAdapter,
+		Domain:  myDomain,
+		Storage: myOutgoingAdapter,
 	}
 	//	Then we retro-set the port processor to the domain, so the domain can access outoging ports
 	myDomain.SetStoragePort(myPortProcessor)
