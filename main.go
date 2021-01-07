@@ -17,28 +17,13 @@ message is coming from a NATS queue.
 
 func main() {
 
-	//	First we have to create the domain
-	myDomain := domain.Domain{}
-
-	//	Then we create the outgoing adapters
-	myOutgoingAdapter := adapters.StorageAdpater{}
-
-	//	Then we create the port processor
-	myPortProcessor := domain.PortProcessor{
-		Domain:  myDomain,
-		Storage: myOutgoingAdapter,
+	// Implementation follows a right to left process for the hexagon
+	sa := adapters.StorageAdapter{}
+	dmain := domain.Domain{
+		StoragePort: sa,
 	}
-	//	Then we retro-set the port processor to the domain, so the domain can access outoging ports
-	myDomain.SetStoragePort(myPortProcessor)
-
-	//	Then we create incoming adapters so incoming messages can access the domain
-	myAdapter := adapters.AlphaAdapter{
-		Port: myPortProcessor,
+	aa := adapters.AlphaAdapter{
+		Port: dmain,
 	}
-
-	//	Finally we start all incoming Adapters
-	go myAdapter.StartSubscriber()
-
-	// some sort of logic to keep the program from
-	// ending
+	go aa.StartSubscriber()
 }

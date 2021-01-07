@@ -4,10 +4,13 @@ import (
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 )
 
-type StorageAdpater struct {
+type StorageAdapter struct {
 }
 
 
-func (c StorageAdpater) DoAction(event cloudevents.Event)  {
-
+//	This is an example of a Driven adapter. The core will call this logic. This is normally
+//	Where you might see a SQL database or something similar
+func (c StorageAdapter) Store(event cloudevents.Event) error{
+	println("We reached the storage adapter!")
+	return nil
 }
