@@ -8,6 +8,6 @@ type StorageAdpater struct {
 }
 
 
-func (c StorageAdpater) DoAction(event cloudevents.Event)  {
-
+func (c StorageAdpater) Store(event cloudevents.Event)  {
+	println(event.Data())
 }

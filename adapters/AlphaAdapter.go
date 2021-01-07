@@ -1,8 +1,8 @@
 package adapters
 
 import (
-	"awesomeTemplate/core/services"
 	"awesomeTemplate/ports"
+	"encoding/json"
 	cloudevents "github.com/cloudevents/sdk-go/v2"
 	"github.com/nats-io/go-nats"
 )
@@ -14,7 +14,7 @@ type AlphaAdapter struct {
 
 //	Do action is a function that takes a Nats Message and then passes it to the port to be processed, in this
 //	example I have it returning a cloud event but it may return nothing at all.
-func (c AlphaAdapter) doAction(msg *nats.Msg) cloudevents.Event {
+func (c AlphaAdapter) Create(msg *nats.Msg) cloudevents.Event {
 	// The do action should determine the
 	// proper course of action for the NATS message
 	// and process it.domain
@@ -24,8 +24,7 @@ func (c AlphaAdapter) doAction(msg *nats.Msg) cloudevents.Event {
 	//Nats message to a cloudevent with the expected format
 	//for the port. However... for this example we just
 	//pretend that has happened
-	viz := services.Nats2CloudEvent{}
-	ce:= viz.Convert(msg)
+	ce := c.convert(msg)
 	returnEvent := c.Port.Create(ce)
 
 	return returnEvent
@@ -39,6 +38,16 @@ func (c AlphaAdapter) StartSubscriber() {
 	// Logic to start NATS subscriber would live here
 	// See cred microservice as example
 	incomingMessage := nats.Msg{}
-	c.doAction(&incomingMessage)
+	c.Create(&incomingMessage)
 
 }
+
+func (c AlphaAdapter) convert(msg *nats.Msg) cloudevents.Event {
+	event :=  cloudevents.NewEvent()
+	event.SetSource("example/uri")
+	event.SetType("example.type")
+	natsJson, _:= json.Marshal(string(msg.Data))
+	event.SetData(cloudevents.ApplicationJSON, natsJson)
+	return event
+}
+
